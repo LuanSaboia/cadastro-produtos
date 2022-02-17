@@ -8,20 +8,21 @@ const estadoInicial = {
   preco: 0,
   fornecedor: "",
   sucesso: false,
-};
+  errors: [],
+}
 export default class CadastroProduto extends React.Component {
   state = estadoInicial;
 
   constructor() {
-    super();
+    super()
     this.service = new ProdutoService();
   }
 
   onChange = (event) => {
-    const valor = event.target.value;
-    const nomeDoCampo = event.target.name;
-    this.setState({ [nomeDoCampo]: valor });
-  };
+    const valor = event.target.value
+    const nomeDoCampo = event.target.name
+    this.setState({ [nomeDoCampo]: valor })
+  }
 
   onSubmit = (event) => {
     const produto = {
@@ -31,17 +32,18 @@ export default class CadastroProduto extends React.Component {
       preco: this.state.preco,
       fornecedor: this.state.fornecedor,
     }
-    try{
-      this.service.salvar(produto);
-      this.limpaCampos();
-      this.setState({ sucesso: true });
-    } catch(erro){
-      
+    try {
+      this.service.salvar(produto)
+      this.limpaCampos()
+      this.setState({ sucesso: true })
+    } catch (erro) {
+      const errors = erro.errors
+      this.setState({ errors: errors })
     }
-  };
+  }
 
   limpaCampos = () => {
-    this.setState(estadoInicial);
+    this.setState(estadoInicial)
   };
   render() {
     return (
@@ -58,6 +60,19 @@ export default class CadastroProduto extends React.Component {
               <strong>Bem feito!</strong> Cadastro realizado com sucesso!
             </div>
           )}
+          {this.state.errors.length > 0 &&
+            this.state.errors.map( msg => {
+              return (
+                <div class="alert alert-dismissible alert-danger">
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert"
+                  >&times;</button>
+                  <strong>Ocorreu um erro!</strong> {msg}
+                </div>
+              )
+            })}
 
           <div className="row">
             <div className="col-md-6">
